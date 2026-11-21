@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>DTDTrainer</AssemblyName>
+    <RootNamespace>DTDTrainer</RootNamespace>
+    <Version>1.0.0</Version>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationVisualStyles>true</ApplicationVisualStyles>
+    <ApplicationDefaultFont>Segoe UI, 9pt</ApplicationDefaultFont>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- Kèm sẵn .NET trong exe: máy khác không cần cài .NET Desktop Runtime. -->
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>embedded</DebugType>
+    <!-- Control tự vẽ, không dùng Designer nên không cần cấu hình code serialization. -->
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
+    <PluginDll>$(MSBuildThisFileDirectory)..\DTDMod.Plugin\bin\Release\net6.0\DTDMod.dll</PluginDll>
+    <ApplicationIcon>..\..\icondtd.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Icon cửa sổ nạp từ resource để có đủ các kích thước (16-256px). -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\icondtd.ico" LogicalName="AppIcon.ico" />
+    <EmbeddedResource Include="Resources\cover.jpg" LogicalName="cover.jpg" />
+    <EmbeddedResource Include="Resources\hero.jpg" LogicalName="hero.jpg" />
+    <EmbeddedResource Include="Resources\logo.png" LogicalName="logo.png" />
+    <EmbeddedResource Include="Resources\Inter.ttf" LogicalName="Inter.ttf" />
+    <EmbeddedResource Include="Resources\MaterialIcons-Regular.ttf" LogicalName="MaterialIcons-Regular.ttf" />
+  </ItemGroup>
+
+  <!-- Nhúng plugin và bộ nạp vào exe để trainer là một file duy nhất (build.ps1 build plugin + loader trước). -->
+  <ItemGroup Condition="Exists('$(PluginDll)')">
+    <EmbeddedResource Include="$(PluginDll)" LogicalName="DTDMod.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)..\..\runtime\DTDLoader.dll')">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\..\runtime\DTDLoader.dll" LogicalName="DTDLoader.dll" />
+  </ItemGroup>
+  <Target Name="WarnMissingPlugin" BeforeTargets="Build" Condition="!Exists('$(PluginDll)')">
+    <Warning Text="Chua build plugin ($(PluginDll)). Trainer se khong tu cai duoc mod; hay chay build.ps1." />
+  </Target>
+</Project>

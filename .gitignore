@@ -1,0 +1,7 @@
+bin/
+obj/
+/settings.json
+/DTDTrainer.exe
+*.user
+.vs/
+/runtime/

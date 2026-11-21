@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>DTDMod</AssemblyName>
+    <RootNamespace>DTDMod</RootNamespace>
+    <Version>1.0.0</Version>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS0618;MSB3277</NoWarn>
+    <!-- BepInEx nằm trong Tool-DTD\runtime (thư mục game không chứa gì của mod). -->
+    <RuntimeDir Condition="'$(RuntimeDir)' == ''">$(MSBuildThisFileDirectory)..\..\runtime</RuntimeDir>
+    <BepInExCoreDir>$(RuntimeDir)\BepInEx\core</BepInExCoreDir>
+    <BepInExInteropDir>$(RuntimeDir)\BepInEx\interop</BepInExInteropDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="$(BepInExCoreDir)\0Harmony.dll" Private="false" />
+    <Reference Include="$(BepInExCoreDir)\BepInEx.Core.dll" Private="false" />
+    <Reference Include="$(BepInExCoreDir)\BepInEx.Unity.IL2CPP.dll" Private="false" />
+    <Reference Include="$(BepInExCoreDir)\BepInEx.Unity.Common.dll" Private="false" />
+    <Reference Include="$(BepInExCoreDir)\Il2CppInterop.Runtime.dll" Private="false" />
+    <Reference Include="$(BepInExCoreDir)\Il2CppInterop.Common.dll" Private="false" />
+    <Reference Include="$(BepInExInteropDir)\*.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CheckRuntime" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(BepInExInteropDir)\Assembly-CSharp.dll')"
+           Text="Khong tim thay interop DLL tai '$(BepInExInteropDir)'. Can runtime\BepInEx\interop (BepInEx sinh ra o lan dau game chay kem mod)." />
+  </Target>
+</Project>
